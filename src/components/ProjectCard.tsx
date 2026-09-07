@@ -15,6 +15,39 @@ const statusClasses = {
   Done: "bg-green-200 text-green-800",
 };
 
+const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+function formatRelativeDate(updatedAt: number) {
+  const difference = Date.now() - updatedAt;
+
+  if (difference < 60000) {
+    return "Przed chwilą";
+  }
+
+  const minutes = Math.floor(difference / 60000);
+
+  if (minutes < 60) {
+    return `${minutes} min temu`;
+  }
+
+  const hours = Math.floor(difference / 3600000);
+
+  if (hours < 24) {
+    return `${hours} godzin temu`;
+  }
+
+  const days = Math.floor(difference / 86400000);
+
+  if (days < 7) {
+    return `${days} dni temu`;
+  }
+
+  return dateFormatter.format(updatedAt);
+}
+
 const ProjectCard = ({
   project,
   onDelete,
@@ -27,7 +60,7 @@ const ProjectCard = ({
       <p className={`${statusBase} ${statusClasses[project.status]}`}>
         {project.status}
       </p>
-
+      <p>Ostatnia zmiana: {formatRelativeDate(project.updatedAt)}</p>
       {project.description && <p className="my-2">{project.description}</p>}
 
       <div className="flex gap-2">
