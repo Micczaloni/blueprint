@@ -64,7 +64,22 @@ function App() {
     return project.title.toLowerCase().includes(searchTerm.toLowerCase());
   }
 
-  const sortedProjects = [...filteredProjects].sort();
+  function compareProjects(a: Project, b: Project) {
+    switch (sortOption) {
+      case "newest":
+        return b.createdAt - a.createdAt;
+      case "oldest":
+        return a.createdAt - b.createdAt;
+      case "titleAsc":
+        return a.title.localeCompare(b.title);
+      case "titleDesc":
+        return b.title.localeCompare(a.title);
+      default:
+        return 0;
+    }
+  }
+
+  const sortedProjects = [...filteredProjects].sort(compareProjects);
 
   return (
     <main className="max-w-[80%] m-auto p-4">
@@ -108,6 +123,17 @@ function App() {
               <option value="In Progress">In Progress</option>
               <option value="Done">Done</option>
             </select>
+            <select
+              value={sortOption}
+              onChange={(event) =>
+                setSortOption(event.target.value as SortOption)
+              }
+            >
+              <option value="newest">Najnowsze</option>
+              <option value="oldest">Najstarsze</option>
+              <option value="titleAsc">A → Z</option>
+              <option value="titleDesc">Z → A</option>
+            </select>
             <p>
               Liczba projektów: {filteredProjects.length} z {projects.length}
             </p>
@@ -116,7 +142,7 @@ function App() {
             {filteredProjects.length === 0 ? (
               <p>Brak projektów w tym statusie</p>
             ) : (
-              filteredProjects.map((project) => (
+              sortedProjects.map((project) => (
                 <ProjectCard
                   key={project.id}
                   project={project}
