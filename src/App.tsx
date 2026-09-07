@@ -99,6 +99,12 @@ function App() {
 
   const sortedProjects = [...filteredProjects].sort(compareProjects);
 
+  function resetFilters() {
+    setSearchTerm("");
+    setSortOption("newest");
+    setStatusFilter("All");
+  }
+
   return (
     <main className="max-w-[80%] m-auto p-4">
       <header className="flex justify-between items-center mb-6">
@@ -152,13 +158,16 @@ function App() {
               <option value="titleAsc">A → Z</option>
               <option value="titleDesc">Z → A</option>
             </select>
+            <Button type="button" variant="secondary" onClick={resetFilters}>
+              Wyczyść filtry
+            </Button>
             <p>
               Liczba projektów: {filteredProjects.length} z {projects.length}
             </p>
           </div>
           <section className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {filteredProjects.length === 0 ? (
-              <p>Brak projektów w tym statusie</p>
+              <p>Brak projektów spełniających kryteria.</p>
             ) : (
               sortedProjects.map((project) => (
                 <ProjectCard
