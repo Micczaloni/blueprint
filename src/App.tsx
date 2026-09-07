@@ -105,6 +105,8 @@ function App() {
     setStatusFilter("All");
   }
 
+  const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "All";
+
   return (
     <main className="max-w-[80%] m-auto p-4">
       <header className="flex justify-between items-center mb-6">
@@ -166,7 +168,7 @@ function App() {
             </p>
           </div>
           <section className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {filteredProjects.length === 0 ? (
+            {filteredProjects.length === 0 && hasActiveFilters ? (
               <p>Brak projektów spełniających kryteria.</p>
             ) : (
               sortedProjects.map((project) => (
