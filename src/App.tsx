@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import type { Project, Status } from "./models/Project";
 
 import EmptyState from "./components/EmptyState";
@@ -11,13 +11,31 @@ type SortOption = "newest" | "oldest" | "titleAsc" | "titleDesc";
 
 function App() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(getInitialProjects);
   const [currentProjectEdit, setCurrentProjectEdit] = useState<Project | null>(
     null,
   );
   const [statusFilter, setStatusFilter] = useState<"All" | Status>("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
+
+  useEffect(() => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+  }, [projects]);
+
+  function getInitialProjects(): Project[] {
+    const projectsStorage = localStorage.getItem("projects");
+
+    if (!projectsStorage) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(projectsStorage);
+    } catch {
+      return [];
+    }
+  }
 
   function openPopup() {
     setIsPopupOpen(true);
