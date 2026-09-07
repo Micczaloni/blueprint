@@ -4,6 +4,7 @@ export interface Project {
   status: Status;
   description: string;
   createdAt: number;
+  updatedAt: number;
 }
 
 export type Status = "To Do" | "In Progress" | "Done";

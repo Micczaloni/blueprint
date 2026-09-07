@@ -91,6 +91,7 @@ function CreateProjectForm({
       status: statusForm,
       description: descriptionForm.trim(),
       createdAt: project?.createdAt ?? Date.now(),
+      updatedAt: Date.now(),
     };
 
     onSubmit(updatedProject);

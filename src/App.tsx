@@ -85,9 +85,9 @@ function App() {
   function compareProjects(a: Project, b: Project) {
     switch (sortOption) {
       case "newest":
-        return b.createdAt - a.createdAt;
+        return b.updatedAt - a.updatedAt;
       case "oldest":
-        return a.createdAt - b.createdAt;
+        return a.updatedAt - b.updatedAt;
       case "titleAsc":
         return a.title.localeCompare(b.title);
       case "titleDesc":
