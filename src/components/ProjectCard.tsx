@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import type { Project } from "../models/Project";
 import Button from "./Button";
 
@@ -20,8 +21,8 @@ const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
   timeStyle: "short",
 });
 
-function formatRelativeDate(updatedAt: number) {
-  const difference = Date.now() - updatedAt;
+function formatRelativeDate(updatedAt: number, currentTime: number) {
+  const difference = currentTime - updatedAt;
 
   if (difference < 60000) {
     return "Przed chwilą";
@@ -36,7 +37,7 @@ function formatRelativeDate(updatedAt: number) {
   const hours = Math.floor(difference / 3600000);
 
   if (hours < 24) {
-    return `${hours} godzin temu`;
+    return `${hours} godz. temu`;
   }
 
   const days = Math.floor(difference / 86400000);
@@ -53,6 +54,17 @@ const ProjectCard = ({
   onDelete,
   onProjectEdit,
 }: ProjectCardProps) => {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
   return (
     <div className="bg-white border rounded-md p-4">
       <h2 className="text-2xl font-bold mb-1">{project.title}</h2>
@@ -60,7 +72,9 @@ const ProjectCard = ({
       <p className={`${statusBase} ${statusClasses[project.status]}`}>
         {project.status}
       </p>
-      <p>Ostatnia zmiana: {formatRelativeDate(project.updatedAt)}</p>
+      <p>
+        Ostatnia zmiana: {formatRelativeDate(project.updatedAt, currentTime)}
+      </p>
       {project.description && <p className="my-2">{project.description}</p>}
 
       <div className="flex gap-2">
