@@ -6,15 +6,21 @@ import CreateProjectForm from "./components/CreateProjectForm";
 import ProjectCard from "./components/ProjectCard";
 import Modal from "./components/Modal";
 import Button from "./components/Button";
+import ConfirmModal from "./components/ConfirmModal";
+import ProjectDetailsModal from "./components/ProjectDetailsModal";
 
 type SortOption = "newest" | "oldest" | "titleAsc" | "titleDesc";
 
 function App() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>(getInitialProjects);
+
   const [currentProjectEdit, setCurrentProjectEdit] = useState<Project | null>(
     null,
   );
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
   const [statusFilter, setStatusFilter] = useState<"All" | Status>("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
@@ -50,10 +56,22 @@ function App() {
     closePopup();
   }
 
-  function deleteProject(project: Project) {
-    setProjects((previousProjects) =>
-      previousProjects.filter((item) => item.id !== project.id),
-    );
+  function onDeleteCancel() {
+    setProjectToDelete(null);
+  }
+
+  function onDeleteAccept() {
+    if (projectToDelete) {
+      setProjects((previousProjects) =>
+        previousProjects.filter((item) => item.id !== projectToDelete.id),
+      );
+    }
+
+    setProjectToDelete(null);
+  }
+
+  function onProjectDelete(project: Project) {
+    setProjectToDelete(project);
   }
 
   function editProject(project: Project) {
@@ -75,12 +93,8 @@ function App() {
   const filteredProjects = projects.filter(
     (project) =>
       (statusFilter === "All" || project.status === statusFilter) &&
-      matchesSearch(project, searchTerm),
+      project.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  function matchesSearch(project: Project, searchTerm: string) {
-    return project.title.toLowerCase().includes(searchTerm.toLowerCase());
-  }
 
   function compareProjects(a: Project, b: Project) {
     switch (sortOption) {
@@ -107,6 +121,10 @@ function App() {
 
   const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "All";
 
+  function onProjectSelect(project: Project) {
+    setSelectedProject(project);
+  }
+
   return (
     <main className="max-w-[80%] m-auto p-4">
       <header className="flex justify-between items-center mb-6">
@@ -125,6 +143,19 @@ function App() {
             project={currentProjectEdit ?? undefined}
           />
         </Modal>
+      )}
+      {projectToDelete && (
+        <ConfirmModal
+          onConfirm={onDeleteAccept}
+          onCancel={onDeleteCancel}
+          project={projectToDelete}
+        ></ConfirmModal>
+      )}
+      {selectedProject && (
+        <ProjectDetailsModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
       )}
       {projects.length === 0 && !isPopupOpen ? (
         <EmptyState onCreateProject={openPopup} />
@@ -175,7 +206,8 @@ function App() {
                 <ProjectCard
                   key={project.id}
                   project={project}
-                  onDelete={deleteProject}
+                  onSelect={onProjectSelect}
+                  onDelete={onProjectDelete}
                   onProjectEdit={onProjectChange}
                 />
               ))

@@ -4,6 +4,7 @@ import Button from "./Button";
 
 type ProjectCardProps = {
   project: Project;
+  onSelect: (project: Project) => void;
   onDelete: (project: Project) => void;
   onProjectEdit: (project: Project) => void;
 };
@@ -53,6 +54,7 @@ const ProjectCard = ({
   project,
   onDelete,
   onProjectEdit,
+  onSelect,
 }: ProjectCardProps) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
   useEffect(() => {
@@ -78,6 +80,13 @@ const ProjectCard = ({
       {project.description && <p className="my-2">{project.description}</p>}
 
       <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="primary"
+          onClick={() => onSelect(project)}
+        >
+          Szczegóły
+        </Button>
         <Button
           type="button"
           variant="secondary"
