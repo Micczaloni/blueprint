@@ -92,6 +92,7 @@ function CreateProjectForm({
       description: descriptionForm.trim(),
       createdAt: project?.createdAt ?? Date.now(),
       updatedAt: Date.now(),
+      isFavorite: project?.isFavorite ?? false,
     };
 
     onSubmit(updatedProject);

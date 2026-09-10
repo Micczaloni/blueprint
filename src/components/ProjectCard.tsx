@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Project } from "../models/Project";
+import { statuses, type Project, type Status } from "../models/Project";
 import Button from "./Button";
 
 type ProjectCardProps = {
@@ -7,6 +7,8 @@ type ProjectCardProps = {
   onSelect: (project: Project) => void;
   onDelete: (project: Project) => void;
   onProjectEdit: (project: Project) => void;
+  onToggleFavorite: (project: Project) => void;
+  onStatusChange: (projectId: string, newStatus: Status) => void;
 };
 
 const statusBase = "inline-block px-2 py-1 rounded-full text-sm font-medium";
@@ -55,6 +57,8 @@ const ProjectCard = ({
   onDelete,
   onProjectEdit,
   onSelect,
+  onToggleFavorite,
+  onStatusChange,
 }: ProjectCardProps) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
   useEffect(() => {
@@ -70,16 +74,41 @@ const ProjectCard = ({
   return (
     <div className="bg-white border rounded-md p-4">
       <h2 className="text-2xl font-bold mb-1">{project.title}</h2>
-
-      <p className={`${statusBase} ${statusClasses[project.status]}`}>
-        {project.status}
-      </p>
+      <div className="flex">
+        <select
+          value={project.status}
+          onChange={(e) => onStatusChange(project.id, e.target.value as Status)}
+          className={`${statusBase} ${statusClasses[project.status]}`}
+        >
+          {statuses.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </select>
+        {project.status !== "Done" && (
+          <Button
+            onClick={() => onStatusChange(project.id, "Done")}
+            type="button"
+            variant="primary"
+          >
+            Oznacz jako ukończony
+          </Button>
+        )}
+      </div>
       <p>
         Ostatnia zmiana: {formatRelativeDate(project.updatedAt, currentTime)}
       </p>
       {project.description && <p className="my-2">{project.description}</p>}
 
       <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => onToggleFavorite(project)}
+        >
+          {project.isFavorite ? "★ Ulubiony" : "☆ Dodaj do ulubionych"}
+        </Button>
         <Button
           type="button"
           variant="primary"
