@@ -6,6 +6,7 @@ export interface Project {
   createdAt: number;
   updatedAt: number;
   isFavorite: boolean;
+  priority: Priority;
 }
 
 export type SortOption =
@@ -18,6 +19,8 @@ export type SortOption =
   | "favoritesFirst";
 
 export type Status = "To Do" | "In Progress" | "Done";
-export type ProjectFilter = "All" | Status | "Ulubione";
-
 export const statuses: Status[] = ["To Do", "In Progress", "Done"];
+
+export type Priority = "Low" | "Medium" | "High";
+
+export type ProjectFilter = "All" | Status | "Ulubione";

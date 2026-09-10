@@ -18,6 +18,7 @@ import ProjectDetailsModal from "./components/ProjectDetailsModal";
 import ProjectStats from "./components/ProjectStats";
 import Toast from "./components/Toast";
 import { updateProject } from "./utils/projectOperations";
+import { isProject } from "./utils/projectValidation";
 
 function App() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -72,13 +73,23 @@ function App() {
     if (!projectsStorage) {
       return [];
     }
+
     try {
-      return JSON.parse(projectsStorage);
+      const parsedData: unknown = JSON.parse(projectsStorage);
+
+      if (!Array.isArray(parsedData)) {
+        return [];
+      }
+
+      if (!parsedData.every(isProject)) {
+        return [];
+      }
+
+      return parsedData;
     } catch {
       return [];
     }
   }
-
   function openPopup() {
     setIsPopupOpen(true);
   }
