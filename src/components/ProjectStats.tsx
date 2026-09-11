@@ -10,9 +10,8 @@ type ProjectStatsProps = {
   currentFilter: ProjectFilter;
 };
 
-const activeFilter =
-  "flex flex-col items-center p-4 border mb-2 mx-2 bg-green-300";
-const otherFilters = "flex flex-col items-center p-4 border mb-2 mx-2";
+const activeFilter = "flex flex-col items-center p-4 border mb-2 bg-green-300";
+const otherFilters = "flex flex-col items-center p-4 border mb-2";
 
 const ProjectStats = ({
   totalProjects,
@@ -24,7 +23,7 @@ const ProjectStats = ({
   currentFilter,
 }: ProjectStatsProps) => {
   return (
-    <div className="flex">
+    <div className="flex flex-wrap gap-2">
       <button
         type="button"
         onClick={() => onSelect("All")}

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { isProject } from "./projectValidation";
+import { migrateProject } from "./projectValidation";
 
-describe("isProject", () => {
-  it("returns true for valid project", () => {
-    const project = {
+describe("migrateProject", () => {
+  it("adds Low priority to old project", () => {
+    const oldProject = {
       id: "1",
       title: "Test",
       status: "Done",
@@ -13,34 +13,28 @@ describe("isProject", () => {
       isFavorite: true,
     };
 
-    expect(isProject(project)).toBe(true);
+    const migratedProject = migrateProject(oldProject);
+
+    expect(migratedProject).toEqual({
+      ...oldProject,
+      priority: "Low",
+    });
   });
+});
 
-  it("returns false when id is not a string", () => {
-    const project = {
-      id: 1,
-      title: "Test",
-      status: "Done",
-      description: "Opis",
-      createdAt: 100,
-      updatedAt: 200,
-      isFavorite: true,
-    };
+it("keeps existing priority", () => {
+  const project = {
+    id: "1",
+    title: "Test",
+    status: "Done",
+    description: "Opis",
+    createdAt: 100,
+    updatedAt: 200,
+    isFavorite: true,
+    priority: "High",
+  };
 
-    expect(isProject(project)).toBe(false);
-  });
+  const migratedProject = migrateProject(project);
 
-  it("returns false when status is invalid", () => {
-    const project = {
-      id: "1",
-      title: "Test",
-      status: "Banana",
-      description: "Opis",
-      createdAt: 100,
-      updatedAt: 200,
-      isFavorite: true,
-    };
-
-    expect(isProject(project)).toBe(false);
-  });
+  expect(migratedProject).toEqual(project);
 });

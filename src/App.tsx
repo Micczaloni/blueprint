@@ -18,7 +18,7 @@ import ProjectDetailsModal from "./components/ProjectDetailsModal";
 import ProjectStats from "./components/ProjectStats";
 import Toast from "./components/Toast";
 import { updateProject } from "./utils/projectOperations";
-import { isProject } from "./utils/projectValidation";
+import { isProject, migrateProject } from "./utils/projectValidation";
 
 function App() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -81,15 +81,18 @@ function App() {
         return [];
       }
 
-      if (!parsedData.every(isProject)) {
+      const migratedProjects = parsedData.map(migrateProject);
+
+      if (!migratedProjects.every(isProject)) {
         return [];
       }
 
-      return parsedData;
+      return migratedProjects;
     } catch {
       return [];
     }
   }
+
   function openPopup() {
     setIsPopupOpen(true);
   }
@@ -231,7 +234,7 @@ function App() {
           onSelect={onFilterSelect}
           currentFilter={statusFilter}
         />
-        <div className="flex pb-4 justify-between">
+        <div className="flex flex-col md:flex-row flex-wrap pb-4 justify-between gap-3">
           <input
             placeholder="Wyszukaj"
             className="border"

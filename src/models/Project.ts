@@ -22,5 +22,6 @@ export type Status = "To Do" | "In Progress" | "Done";
 export const statuses: Status[] = ["To Do", "In Progress", "Done"];
 
 export type Priority = "Low" | "Medium" | "High";
+export const priorities: Priority[] = ["Low", "Medium", "High"];
 
 export type ProjectFilter = "All" | Status | "Ulubione";

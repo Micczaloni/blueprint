@@ -1,5 +1,5 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import type { Project, Status } from "../models/Project";
+import { Priority, type Project, type Status } from "../models/Project";
 import Button from "./Button";
 
 type CreateProjectFormProps = {
@@ -20,6 +20,9 @@ function CreateProjectForm({
   const [descriptionForm, setDescriptionForm] = useState(
     project?.description ?? "",
   );
+  const [priorityForm, setPriorityForm] = useState<Priority>(
+    project?.priority ?? "Low",
+  );
   const [errors, setErrors] = useState({
     title: "",
   });
@@ -29,6 +32,7 @@ function CreateProjectForm({
       setTitleForm(project.title);
       setStatusForm(project.status);
       setDescriptionForm(project.description);
+      setPriorityForm(project.priority);
     }
   }, [project]);
 
@@ -64,8 +68,12 @@ function CreateProjectForm({
     }));
   }
 
-  function handleSelectChange(event: ChangeEvent<HTMLSelectElement>) {
+  function handleStatusChange(event: ChangeEvent<HTMLSelectElement>) {
     setStatusForm(event.target.value as Status);
+  }
+
+  function handlePriorityChange(event: ChangeEvent<HTMLSelectElement>) {
+    setPriorityForm(event.target.value as Priority);
   }
 
   function handleDescriptionChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -93,6 +101,7 @@ function CreateProjectForm({
       createdAt: project?.createdAt ?? Date.now(),
       updatedAt: Date.now(),
       isFavorite: project?.isFavorite ?? false,
+      priority: priorityForm,
     };
 
     onSubmit(updatedProject);
@@ -120,11 +129,23 @@ function CreateProjectForm({
         <select
           className="w-full border rounded-sm p-2 focus:border-blue-500 focus:outline-none"
           value={statusForm}
-          onChange={handleSelectChange}
+          onChange={handleStatusChange}
         >
           <option>To Do</option>
           <option>In Progress</option>
           <option>Done</option>
+        </select>
+      </label>
+      <label className="flex flex-col gap-2">
+        Priorytet
+        <select
+          className="w-full border rounded-sm p-2 focus:border-blue-500 focus:outline-none"
+          value={priorityForm}
+          onChange={handlePriorityChange}
+        >
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
         </select>
       </label>
 

@@ -19,6 +19,12 @@ const statusClasses = {
   Done: "bg-green-200 text-green-800",
 };
 
+const priorityClasses = {
+  Low: "bg-green-200 text-gray-700 p-2",
+  Medium: "bg-yellow-200 text-black p-2",
+  High: "bg-red-200 text-red-700 p-2",
+};
+
 const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
   dateStyle: "medium",
   timeStyle: "short",
@@ -72,13 +78,20 @@ const ProjectCard = ({
   }, []);
 
   return (
-    <div className="bg-white border rounded-md p-4">
+    <div className="relative bg-white border rounded-md p-4">
+      {project.priority && (
+        <p
+          className={`absolute right-0 top-0 " + ${priorityClasses[project.priority]}`}
+        >
+          {project.priority}
+        </p>
+      )}
       <h2 className="text-2xl font-bold mb-1">{project.title}</h2>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row gap-2">
         <select
           value={project.status}
           onChange={(e) => onStatusChange(project.id, e.target.value as Status)}
-          className={`${statusBase} ${statusClasses[project.status]}`}
+          className={`max-w-[100px] ${statusBase} ${statusClasses[project.status]}`}
         >
           {statuses.map((status) => (
             <option key={status} value={status}>
@@ -101,7 +114,7 @@ const ProjectCard = ({
       </p>
       {project.description && <p className="my-2">{project.description}</p>}
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button
           type="button"
           variant="secondary"

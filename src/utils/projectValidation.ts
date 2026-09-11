@@ -1,4 +1,5 @@
-import { Project, Status, statuses } from "../models/Project";
+import { statuses, priorities } from "../models/Project";
+import type { Project, Status, Priority } from "../models/Project";
 
 export function isProject(value: unknown): value is Project {
   if (typeof value !== "object" || value === null) {
@@ -37,5 +38,28 @@ export function isProject(value: unknown): value is Project {
     return false;
   }
 
+  if (
+    !("priority" in value) ||
+    typeof value.priority !== "string" ||
+    !priorities.includes(value.priority as Priority)
+  ) {
+    return false;
+  }
+
   return true;
+}
+
+export function migrateProject(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) {
+    return value;
+  }
+
+  if (!("priority" in value)) {
+    return {
+      ...value,
+      priority: "Low",
+    };
+  }
+
+  return value;
 }
